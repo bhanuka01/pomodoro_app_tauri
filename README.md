@@ -15,6 +15,23 @@ A high-performance, aesthetically pleasing Pomodoro timer application built to h
 - **Native Performance**: Powered by Rust and Tauri for a lightweight resource footprint.
 - **Cross-Platform**: Runs smoothly on Windows, macOS, and Linux.
 
+---
+
+## 🚀 Release
+
+You can download the latest prebuilt version of the app from the **Releases** page.
+
+### Windows
+- `pomodoro-tauri-win.exe` — Standalone executable
+
+### How to Install
+1. Download the `.exe` file from the Releases page.
+2. Double-click to run.
+3. If Windows shows a warning, click **More info → Run anyway** (since it's not code-signed yet).
+
+👉 **Download here:** https://github.com/bhanuka01/pomodoro_app_tauri/releases
+
+---
 ## 🛠️ Built With
 
 This project exploits the power of the web combined with the performance of Rust:
@@ -44,8 +61,8 @@ To run this app locally:
 1.  **Prerequisites**: Ensure you have Rust and the Tauri CLI installed.
 2.  **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/pomodoro-app.git
-    cd pomodoro-app
+    git clone https://github.com/bhanuka01/pomodoro_app_tauri.git
+    cd pomodoro_app_tauri
     ```
 3.  **Run the development server**:
     ```bash
