@@ -200,6 +200,15 @@ h1 {
   color: hsl(var(--foreground));
 }
 
+.btn-danger {
+  background-color: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+}
+
+.btn-danger:hover {
+  opacity: 0.9;
+}
+
 /* Tasks */
 .tasks-section {
   display: flex;

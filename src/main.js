@@ -2,14 +2,14 @@
 
 // State
 let state = {
-  timer: 25 * 60, // seconds
+  timer: 1 * 60, // seconds
   isRunning: false,
   timerInterval: null,
   tasks: [],
   activeTaskId: null,
   history: [],
-  audioContext: null,
-  oscillator: null,
+
+  audio: null,
   isAlarmPlaying: false,
 };
 
@@ -20,7 +20,9 @@ const timerProgress = document.querySelector(".timer-progress"); // SVG Circle
 
 const startBtn = document.getElementById("start-btn");
 const pauseBtn = document.getElementById("pause-btn");
+
 const resetBtn = document.getElementById("reset-btn");
+const stopAlarmBtn = document.getElementById("stop-alarm-btn");
 
 const taskListEl = document.getElementById("task-list");
 const newTaskInput = document.getElementById("new-task-input");
@@ -52,10 +54,7 @@ function startTimer() {
   updateControls();
   timerLabel.textContent = "FOCUSING...";
 
-  // Request audio context on user gesture if needed
-  if (!state.audioContext) {
-    state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  }
+
 
   state.timerInterval = setInterval(() => {
     if (state.timer > 0) {
@@ -102,48 +101,39 @@ function completeSession() {
 }
 
 // Alarm Logic
+
 function playAlarm() {
   if (state.isAlarmPlaying) return;
   state.isAlarmPlaying = true;
 
-  // Create oscillator
-  const osc = state.audioContext.createOscillator();
-  const gainNode = state.audioContext.createGain();
+  if (!state.audio) {
+    state.audio = new Audio('assets/sound.mp3');
+    state.audio.loop = true;
+  }
 
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(880, state.audioContext.currentTime);
+  state.audio.currentTime = 0;
+  state.audio.play().catch(e => console.error("Error playing sound:", e));
 
-  state.oscillator = osc;
-  osc.connect(gainNode);
-  gainNode.connect(state.audioContext.destination);
-  osc.start();
+  // Show Stop Button, hide others if needed or just overlay
+  stopAlarmBtn.style.display = "inline-flex";
+  startBtn.style.display = "none";
+  pauseBtn.style.display = "none";
 
-  // Pattern: Beep-Beep... 
-  // For simplicity, just a pulsed beep loop
-  state.alarmInterval = setInterval(() => {
-    if (!state.isAlarmPlaying) {
-      clearInterval(state.alarmInterval);
-      return;
-    }
-    const t = state.audioContext.currentTime;
-    gainNode.gain.setValueAtTime(0.1, t);
-    gainNode.gain.linearRampToValueAtTime(0, t + 0.1);
-  }, 500);
-
-  // Auto stop after 5s if user doesn't
-  setTimeout(stopAlarm, 5000);
+  // Auto stop after 30s (optional safety)
+  // setTimeout(stopAlarm, 30000);
 }
 
 function stopAlarm() {
   if (!state.isAlarmPlaying) return;
   state.isAlarmPlaying = false;
-  if (state.oscillator) {
-    try {
-      state.oscillator.stop();
-      state.oscillator.disconnect();
-    } catch (e) { }
-    state.oscillator = null;
+
+  if (state.audio) {
+    state.audio.pause();
+    state.audio.currentTime = 0;
   }
+
+  stopAlarmBtn.style.display = "none";
+  updateControls(); // Restore correct button state
 }
 
 function updateControls() {
@@ -298,6 +288,7 @@ function loadData() {
 startBtn.addEventListener("click", startTimer);
 pauseBtn.addEventListener("click", pauseTimer);
 resetBtn.addEventListener("click", resetTimer);
+stopAlarmBtn.addEventListener("click", stopAlarm);
 addTaskBtn.addEventListener("click", addTask);
 newTaskInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addTask();
